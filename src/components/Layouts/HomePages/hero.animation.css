@@ -1,0 +1,94 @@
+/* Blob animations */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(20px, -10px) scale(1.1);
+  }
+  66% {
+    transform: translate(-15px, 15px) scale(0.9);
+  }
+}
+.animate-blob-slow {
+  animation: blob 12s ease-in-out infinite;
+}
+.animate-blob-medium {
+  animation: blob 8s ease-in-out infinite;
+}
+.animate-blob-fast {
+  animation: blob 5s ease-in-out infinite;
+}
+
+/* Float animation for logo */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* Fade-in Up */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 1s forwards;
+}
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+.animation-delay-1500 {
+  animation-delay: 1.5s;
+}
+
+/* Floating coins/icons */
+@keyframes coinFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(15deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-10deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(10deg);
+  }
+}
+.animate-coin-float {
+  animation: coinFloat 6s ease-in-out infinite;
+}
+
+/* Color shift for colorful blobs and icons */
+@keyframes colorShift {
+  0%,
+  100% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(360deg);
+  }
+}
+.animate-color-shift {
+  animation: colorShift 20s linear infinite;
+}
