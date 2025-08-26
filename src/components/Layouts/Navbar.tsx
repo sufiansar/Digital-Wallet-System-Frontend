@@ -13,18 +13,40 @@ import {
 } from "@/components/ui/popover";
 import { ModeToggle } from "./ModeToggle";
 import { Link } from "react-router";
+import {
+  authApi,
+  useGetUserInfoQuery,
+  useLogoutMutation,
+} from "@/Redux/features/auth/auth.api";
+import { useAppDispatch } from "@/Redux/hook";
+import { toast } from "sonner";
+import { roles } from "@/constants/role";
 
 // Navigation links for public landing section
 const landingNavigationLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/features", label: "Features" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Contact" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/", label: "Home", role: "PUBLIC" },
+  { href: "/about", label: "About", role: "PUBLIC" },
+  { href: "/features", label: "Features", role: "PUBLIC" },
+  { href: "/pricing", label: "Pricing", role: "PUBLIC" },
+  { href: "/contact", label: "Contact", role: "PUBLIC" },
+  { href: "/faq", label: "FAQ", role: "PUBLIC" },
+  { href: "/admin", label: "Dashboard", role: roles.admin },
+  { href: "/agent", label: "Dashboard", role: roles.agent },
+  { href: "/user", label: "Dashboard", role: roles.user },
 ];
 
-export default function PublicLandingNavbar() {
+export default function Navbar() {
+  const dispatch = useAppDispatch();
+  const { data } = useGetUserInfoQuery(undefined);
+  console.log("userInfo from navbar", data);
+  const [logout] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    await logout(undefined);
+    dispatch(authApi.util.resetApiState());
+    toast.success("Logged out successfully");
+  };
+
   return (
     <header className=" container mx-auto  border-b px-4 md:px-6 sticky top-0 z-50">
       <div className="flex h-16  justify-between gap-4">
@@ -66,11 +88,22 @@ export default function PublicLandingNavbar() {
                 <NavigationMenu className="max-w-none *:w-full">
                   <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
                     {landingNavigationLinks.map((link, index) => (
-                      <NavigationMenuItem key={index} className="w-full">
-                        <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
-                          <Link to={link.href}>{link.label}</Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
+                      <>
+                        {link.role === "PUBLIC" && (
+                          <NavigationMenuItem key={index} className="h-full">
+                            <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
+                              <Link to={link.href}>{link.label}</Link>
+                            </NavigationMenuLink>
+                          </NavigationMenuItem>
+                        )}
+                        {data?.data?.role === link.role && (
+                          <NavigationMenuItem key={index} className="h-full">
+                            <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
+                              <Link to={link.href}>{link.label}</Link>
+                            </NavigationMenuLink>
+                          </NavigationMenuItem>
+                        )}
+                      </>
                     ))}
                   </NavigationMenuList>
                 </NavigationMenu>
@@ -85,11 +118,22 @@ export default function PublicLandingNavbar() {
             <NavigationMenu className="h-full *:h-full max-md:hidden">
               <NavigationMenuList className="h-full gap-2">
                 {landingNavigationLinks.map((link, index) => (
-                  <NavigationMenuItem key={index} className="h-full">
-                    <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
-                      <Link to={link.href}>{link.label}</Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
+                  <>
+                    {link.role === "PUBLIC" && (
+                      <NavigationMenuItem key={index} className="h-full">
+                        <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                    {data?.data?.role === link.role && (
+                      <NavigationMenuItem key={index} className="h-full">
+                        <NavigationMenuLink className="text-muted-foreground hover:text-primary border-b-primary hover:border-b-primary data-[active]:border-b-primary h-full justify-center rounded-none border-y-2 border-transparent py-1.5 font-medium hover:bg-transparent data-[active]:bg-transparent!">
+                          <Link to={link.href}>{link.label}</Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    )}
+                  </>
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
@@ -99,12 +143,24 @@ export default function PublicLandingNavbar() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <Button asChild variant="ghost" size="sm" className="text-sm">
-            <a href="#signin">Sign In</a>
-          </Button>
-          {/* <Button asChild size="sm" className="text-sm">
-            <a href="#get-started">Get Started</a>
-          </Button> */}
+          {data?.data?.email && (
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="text-sm"
+            >
+              Logout
+            </Button>
+          )}
+          {!data?.data?.email && (
+            <Button
+              variant="outline"
+              className="text-sm"
+              onClick={() => window.location.assign("/login")}
+            >
+              Login
+            </Button>
+          )}
         </div>
       </div>
     </header>
