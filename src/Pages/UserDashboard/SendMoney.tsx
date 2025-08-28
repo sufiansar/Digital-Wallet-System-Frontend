@@ -20,7 +20,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { useSendMoneyMutation } from "@/Redux/features/Wallet/wallet.api";
 
-// ✅ Schema matches backend (receiverPhone)
 const SendMoneySchema = z.object({
   receiverPhone: z.string().min(3, { message: "Receiver phone is required." }),
   amount: z
@@ -31,7 +30,7 @@ const SendMoneySchema = z.object({
 
 type SendMoneyType = z.infer<typeof SendMoneySchema>;
 
-export function SendMoney() {
+export default function SendMoney() {
   const [sendMoney] = useSendMoneyMutation();
 
   const form = useForm<SendMoneyType>({

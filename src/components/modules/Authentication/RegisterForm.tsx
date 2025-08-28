@@ -55,11 +55,11 @@ export function RegisterForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "Abu Sufian",
-      email: "sufian01984@gmail.com",
-      password: "Sufian12@",
-      confirmPassword: "Sufian12@",
-      phone: "01743911467",
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
       role: "USER",
     },
   });
@@ -79,7 +79,7 @@ export function RegisterForm({
     try {
       await register(userInfo).unwrap();
       toast.success("Registration successful!");
-      navigate("/verify");
+      navigate("/verify", { state: data.email });
     } catch (err: any) {
       console.log("Error:", err);
     }
@@ -96,7 +96,6 @@ export function RegisterForm({
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-          {/* Name */}
           <FormField
             control={form.control}
             name="name"

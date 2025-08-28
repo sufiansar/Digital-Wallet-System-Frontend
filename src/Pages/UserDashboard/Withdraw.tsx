@@ -1,92 +1,58 @@
-"use client";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useState } from "react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
 import { useWithdrawMoneyMutation } from "@/Redux/features/Wallet/wallet.api";
-import Loading from "@/utils/Loading";
+import { Loader2 } from "lucide-react";
 
-// Zod schema with number preprocessing
-const withdrawSchema = z.object({
-  amount: z.preprocess(
-    (val) => Number(val),
-    z
-      .number({ message: "Amount is required" })
-      .min(1, "Amount must be at least 1")
-  ),
-});
-
-type WithdrawFormValues = z.infer<typeof withdrawSchema>;
-
-export function Withdraw() {
+export default function Withdraw() {
+  const [amount, setAmount] = useState<number | "">("");
   const [withdrawMoney, { isLoading }] = useWithdrawMoneyMutation();
 
-  const form = useForm({
-    resolver: zodResolver(withdrawSchema),
-    defaultValues: {
-      amount: 0,
-    },
-  });
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-32">
-        <Loading />
-      </div>
-    );
-  }
+  const handleWithdraw = async () => {
+    if (!amount || amount <= 0) {
+      toast.error("Enter a valid amount");
+      return;
+    }
 
-  const onSubmit = async (values: WithdrawFormValues) => {
     try {
-      await withdrawMoney(values).unwrap();
-      toast.success("Money withdrawn successfully!");
-      form.reset();
+      await withdrawMoney({ amount: Number(amount) }).unwrap();
+      toast.success(`Successfully withdrew ${amount} BDT`);
+      setAmount("");
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to withdraw money");
+      toast.error(err?.data?.message || "Withdrawal failed");
     }
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-md mx-auto space-y-4"
-      >
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter amount"
-                  {...field}
-                  value={field.value === undefined ? "" : Number(field.value)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <div className="w-full px-4 sm:px-0 sm:max-w-md mx-auto mt-12">
+      <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 space-y-5">
+        {/* Title */}
+        <h2 className="text-2xl font-semibold text-center">Withdraw Money</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+          Enter the amount you want to withdraw from your wallet.
+        </p>
+
+        {/* Input */}
+        <Input
+          type="number"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) =>
+            setAmount(e.target.value ? Number(e.target.value) : "")
+          }
         />
 
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? "Processing..." : "Withdraw Money"}
+        {/* Submit Button */}
+        <Button
+          onClick={handleWithdraw}
+          disabled={isLoading}
+          className="w-full"
+        >
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isLoading ? "Processing..." : "Withdraw"}
         </Button>
-      </form>
-    </Form>
+      </div>
+    </div>
   );
 }

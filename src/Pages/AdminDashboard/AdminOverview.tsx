@@ -1,179 +1,188 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGetUserStatsQuery } from "@/Redux/features/stats/stats.api";
 import Loading from "@/utils/Loading";
-import { useGetOverviewQuery } from "@/Redux/features/Wallet/wallet.api";
+
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
   BarChart,
   Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useGetUserStatsQuery } from "@/Redux/features/stats/stats.api";
 
-const COLORS = ["#2563eb", "#16a34a", "#16a34a", "#dc2626"];
+interface WalletRole {
+  _id: string;
+  count: number;
+}
 
-export default function AdminOverview() {
-  const {
-    data: userStats,
-    isLoading: loadingUsers,
-    isError: userError,
-  } = useGetUserStatsQuery(undefined);
+// interface OverviewStats {
+//   totalWallets: number;
+//   fundedWallets: number;
+//   emptyWallets: number;
+//   walletsByRole: WalletRole[];
+//   totalUsers: number;
+//   totalAgents: number;
+//   totalActiveUsers: number;
+//   totalInActiveUsers: number;
+//   totalBlockedUsers: number;
+//   newUsersInLast7Days: number;
+//   newUsersInLast30Days: number;
+//   totalTransactions: number;
+//   totalTransactionVolume: number;
+// }
 
-  console.log(userStats);
-  const {
-    data: walletOverview,
-    isLoading: loadingWallet,
-    isError: walletError,
-  } = useGetOverviewQuery(undefined);
+export default function OverviewDashboard() {
+  const { data: stats, isLoading, isError } = useGetUserStatsQuery(undefined);
 
-  if (loadingUsers || loadingWallet)
+  if (isLoading)
     return (
-      <p className="flex justify-center items-center h-32">
+      <div className="flex items-center justify-center h-64">
         <Loading />
-      </p>
+      </div>
     );
-  if (userError || walletError) return <p>Failed to load dashboard data.</p>;
+  if (isError || !stats)
+    return <p className="text-center mt-10">Error loading stats.</p>;
 
-  // Prepare Pie Chart Data (Users by Role)
-  const userRolesData =
-    userStats?.usersByRole?.map((r: any) => ({
-      name: r._id,
-      value: r.count,
+  // Prepare data for Bar Chart
+  const walletRoleData =
+    stats?.data?.walletsByRole?.map((w: WalletRole) => ({
+      role: w._id,
+      wallets: w.count,
     })) || [];
 
-  const transactionData = [
-    {
-      name: "Wallet",
-      count: walletOverview?.data?.recentTransactions?.length || 0,
-      volume:
-        walletOverview?.data?.recentTransactions?.reduce(
-          (acc: number, tx: any) => acc + tx.amount,
-          0
-        ) || 0,
-    },
-  ];
-  console.log(transactionData);
-
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {/* Total Users */}
-      <Card className="shadow-lg rounded-2xl">
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Admin Overview Dashboard
+      </h1>
+
+      {/* Wallet Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Wallets</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalWallets}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Funded Wallets</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.fundedWallets}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Empty Wallets</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.emptyWallets}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalUsers}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Wallets by Role Bar Chart */}
+      <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Total Users</CardTitle>
+          <CardTitle>Wallets by Role</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-3xl font-bold">{userStats?.totalUsers}</p>
-        </CardContent>
-      </Card>
-
-      {/* Active Users */}
-      <Card className="shadow-lg rounded-2xl">
-        <CardHeader>
-          <CardTitle>Active Users</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold">{userStats?.totalActiveUsers}</p>
-        </CardContent>
-      </Card>
-
-      {/* Blocked Users */}
-      <Card className="shadow-lg rounded-2xl">
-        <CardHeader>
-          <CardTitle>Blocked Users</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold">{userStats?.totalBlockedUsers}</p>
-        </CardContent>
-      </Card>
-
-      {/* User Roles Pie Chart */}
-      <Card className="shadow-lg rounded-2xl md:col-span-2">
-        <CardHeader>
-          <CardTitle>Users by Role</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={userRolesData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={90}
-                label={(entry) => `${entry.name}: ${entry.value}`}
-              >
-                {userRolesData.map((_entry: any, index: number) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Transactions Bar Chart */}
-      <Card className="shadow-lg rounded-2xl md:col-span-2">
-        <CardHeader>
-          <CardTitle>Transactions Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={transactionData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip formatter={(value: number) => `৳ ${value}`} />
-              <Legend />
-              <Bar dataKey="count" fill="#2563eb" name="Transaction Count" />
-              <Bar dataKey="volume" fill="#16a34a" name="Transaction Volume" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-lg rounded-2xl md:col-span-3">
-        <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {walletOverview?.data?.recentTransactions?.length ? (
-            <table className="w-full table-auto border-collapse border border-slate-200">
-              <thead>
-                <tr className="bg-slate-100">
-                  <th className="border p-2">Type</th>
-                  <th className="border p-2">From</th>
-                  <th className="border p-2">To</th>
-                  <th className="border p-2">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {walletOverview?.data?.recentTransactions?.map((tx: any) => (
-                  <tr key={tx._id}>
-                    <td className="border p-2">{tx.type}</td>
-                    <td className="border p-2">{tx.sender}</td>
-                    <td className="border p-2">{tx.receiver}</td>
-                    <td className="border p-2">৳ {tx.amount}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {walletRoleData.length === 0 ? (
+            <p className="text-center text-gray-500">
+              No wallet role data available.
+            </p>
           ) : (
-            <p>No recent transactions.</p>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={walletRoleData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="role" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="wallets" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           )}
         </CardContent>
       </Card>
+
+      {/* User Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Active Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalActiveUsers}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Inactive Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalInActiveUsers}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Blocked Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalBlockedUsers}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>New Users Last 7 Days</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.newUsersInLast7Days}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>New Users Last 30 Days</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.newUsersInLast30Days}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Transaction Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Transactions</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalTransactions}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Transaction Volume</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-semibold">
+            {stats?.data?.totalTransactionVolume}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

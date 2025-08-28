@@ -13,6 +13,10 @@ export interface ITransaction {
   amount: number;
   type: TTransactionType;
   timestamp: string;
+  sender?: string;
+  receiver?: string;
+  status: string;
+  createdAt: string;
 }
 
 export interface IMeta {

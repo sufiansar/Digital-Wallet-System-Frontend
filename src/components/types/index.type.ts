@@ -18,11 +18,11 @@ export interface IVerifyOtp {
 export interface IUser {
   _id?: string;
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   picture?: string;
   role: string;
-  isActive?: string;
+  isActive?: "ACTIVE" | "BLOCKED" | "INACTIVE";
   isDeleted?: boolean;
   isVerified?: boolean;
   auths?: Auth[];
@@ -45,3 +45,5 @@ export interface ISidebarItem {
 }
 
 export type TRole = "USER" | "ADMIN" | "AGENT";
+
+// (Removed duplicate IUser interface)

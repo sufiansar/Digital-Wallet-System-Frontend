@@ -8,7 +8,25 @@ export const statsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    getWalletStats: builder.query({
+      query: () => ({
+        url: "/stats/wallet-stats",
+        method: "GET",
+      }),
+    }),
+
+    getTransactionStats: builder.query({
+      query: () => ({
+        url: "/stats/transaction-stats",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetUserStatsQuery } = statsApi;
+export const {
+  useGetUserStatsQuery,
+  useGetWalletStatsQuery,
+  useGetTransactionStatsQuery,
+} = statsApi;

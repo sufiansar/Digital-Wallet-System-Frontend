@@ -54,9 +54,7 @@ export default function TransactionHistory() {
     <Card className="p-6 shadow-md">
       <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-6 items-end">
-        {/* Transaction Type */}
         <div>
           <label className="text-sm block mb-1">Type</label>
           <Select
@@ -80,7 +78,6 @@ export default function TransactionHistory() {
           </Select>
         </div>
 
-        {/* Start Date */}
         <div>
           <label className="text-sm block mb-1">Start Date</label>
           <Popover>
@@ -102,7 +99,6 @@ export default function TransactionHistory() {
           </Popover>
         </div>
 
-        {/* End Date */}
         <div>
           <label className="text-sm block mb-1">End Date</label>
           <Popover>

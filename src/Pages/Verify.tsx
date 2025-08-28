@@ -43,7 +43,6 @@ const FormSchema = z.object({
 
 export default function Verify() {
   const location = useLocation();
-  //   const navigate = useNavigate();
   const [email] = useState(location.state);
   const [confirmed, setConfirmed] = useState(false);
   const [sendOtp] = useSendOtpMutation();

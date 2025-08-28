@@ -6,15 +6,15 @@ const team = [
   {
     name: "Md. Abu Sufian",
     role: "Fullstack Developer",
-    profileUrl: "/user/profile",
-  },
-  {
-    name: "Ali Reza",
-    role: "Backend Developer",
     profileUrl: "#",
   },
   {
-    name: "Fatima Noor",
+    name: "Ripas Ali",
+    role: "Fullstack Developer",
+    profileUrl: "#",
+  },
+  {
+    name: "Usman Noor",
     role: "UI/UX Designer",
     profileUrl: "#",
   },
@@ -23,7 +23,6 @@ const team = [
 export default function About() {
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 space-y-12">
-      {/* Service Story */}
       <Card className="shadow-lg rounded-2xl">
         <CardHeader className="flex items-center gap-4">
           <BookOpen className="w-6 h-6 text-blue-600" />
@@ -39,7 +38,6 @@ export default function About() {
         </CardContent>
       </Card>
 
-      {/* Mission */}
       <Card className="shadow-lg rounded-2xl">
         <CardHeader className="flex items-center gap-4">
           <Target className="w-6 h-6 text-green-600" />
@@ -53,7 +51,6 @@ export default function About() {
         </CardContent>
       </Card>
 
-      {/* Team */}
       <Card className="shadow-lg rounded-2xl">
         <CardHeader className="flex items-center gap-4">
           <Users className="w-6 h-6 text-purple-600" />

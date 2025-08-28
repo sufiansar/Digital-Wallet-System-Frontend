@@ -13,6 +13,7 @@ export const transactionApi = baseApi.injectEndpoints({
         params: {
           page,
           limit,
+
           ...(type ? { type } : {}),
           ...(startDate ? { startDate } : {}),
           ...(endDate ? { endDate } : {}),
@@ -20,7 +21,17 @@ export const transactionApi = baseApi.injectEndpoints({
       }),
       providesTags: ["TRANSACTIONS"],
     }),
+
+    getAllTransactions: builder.query({
+      query: (params) => ({
+        url: "/transaction/all",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["TRANSACTIONS"],
+    }),
   }),
 });
 
-export const { useGetMyTransactionsQuery } = transactionApi;
+export const { useGetMyTransactionsQuery, useGetAllTransactionsQuery } =
+  transactionApi;

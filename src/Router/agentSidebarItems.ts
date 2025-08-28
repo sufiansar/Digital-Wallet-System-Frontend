@@ -1,11 +1,23 @@
 import type { ISidebarItem } from "@/components/types/index.type";
-import { AddMoney } from "@/Pages/AgentDashboard/AddMoney";
+import { lazy } from "react";
 
-import AgentOverview from "@/Pages/AgentDashboard/AgentOverview";
-import AgentProfile from "@/Pages/AgentDashboard/AgentProfile";
-import TransactionHistory from "@/Pages/AgentDashboard/TransactionHistory";
+// import AgentOverview from "@/Pages/AgentDashboard/AgentOverview";
+// import AgentProfile from "@/Pages/AgentDashboard/AgentProfile";
+// import TransactionHistory from "@/Pages/AgentDashboard/TransactionHistory";
+// import WithdrawMoney from "@/Pages/AgentDashboard/WithdrawMoney";
 
-import WithdrawMoney from "@/Pages/AgentDashboard/WithdrawMoney";
+const AgentOverview = lazy(
+  () => import("@/Pages/AgentDashboard/AgentOverview")
+);
+const AgentProfile = lazy(() => import("@/Pages/AgentDashboard/AgentProfile"));
+const TransactionHistory = lazy(
+  () => import("@/Pages/AgentDashboard/TransactionHistory")
+);
+const AddMoney = lazy(() => import("@/Pages/AgentDashboard/AddMoney"));
+// import { AddMoney } from "@/Pages/AgentDashboard/AddMoney";
+const WithdrawMoney = lazy(
+  () => import("@/Pages/AgentDashboard/WithdrawMoney")
+);
 
 export const agentSidebarItems: ISidebarItem[] = [
   {

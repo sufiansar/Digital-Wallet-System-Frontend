@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/admin/users" />,
+        element: <Navigate to="/admin/users-stats" />,
       },
       ...generateRoutes(adminSidebarItems),
     ],
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/user/send-money" />,
+        element: <Navigate to="/user/overview" />,
       },
       ...generateRoutes(userSidebarItems),
     ],
