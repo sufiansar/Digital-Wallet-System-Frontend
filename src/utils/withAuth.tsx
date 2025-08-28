@@ -10,7 +10,7 @@ export const withAuth = (Component: ComponentType, requiredRole?: TRole[]) => {
     if (!isLoading && !data?.data?.email) {
       return <Navigate to="/login" />;
     }
-    console.log(data?.data?.role);
+
     if (
       requiredRole &&
       !isLoading &&

@@ -86,7 +86,7 @@ export default function Verify() {
       if (res.success) {
         toast.success("OTP Verified", { id: toastId });
         setConfirmed(true);
-        navigate("/");
+        navigate("/login");
       }
     } catch (err) {
       console.log(err);

@@ -23,55 +23,78 @@ import {
 } from "@/components/ui/dialog";
 
 import { useUpdateUserMutation } from "@/Redux/features/user/user.api";
+import {
+  useChangePasswordMutation,
+  useGetUserInfoQuery,
+} from "@/Redux/features/auth/auth.api";
 import { toast } from "sonner";
 import Loading from "@/utils/Loading";
-import { useGetUserInfoQuery } from "@/Redux/features/auth/auth.api";
 import { useState } from "react";
+import Password from "@/components/ui/Password";
 
 const profileSchema = z.object({
   name: z.string().optional(),
   phone: z.string().optional(),
-  password: z
+});
+
+const passwordSchema = z.object({
+  oldPassword: z.string().min(6, "Old password is required"),
+  newPassword: z
     .string()
-    .optional()
+    .min(6, "Password must be at least 6 characters")
     .refine(
       (val) =>
-        !val ||
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/.test(
           val
         ),
-      "Password must be at least 6 characters and include letters, numbers, and a special character"
+      "Password must include letters, numbers, and a special character"
     ),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
+type PasswordFormValues = z.infer<typeof passwordSchema>;
 
 export function ProfileCard() {
   const [updateProfile, { isLoading: isUpdating }] = useUpdateUserMutation();
-  const [open, setOpen] = useState(false);
+  const [changePasswordMutation, { isLoading: isChanging }] =
+    useChangePasswordMutation();
   const { data: userData } = useGetUserInfoQuery(undefined);
 
-  const form = useForm<ProfileFormValues>({
+  const [openProfile, setOpenProfile] = useState(false);
+  const [openPassword, setOpenPassword] = useState(false);
+
+  const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: "",
-      phone: "",
-      password: "",
-    },
+    defaultValues: { name: "", phone: "" },
   });
 
-  const onSubmit = async (values: ProfileFormValues) => {
+  const passwordForm = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { oldPassword: "", newPassword: "" },
+  });
+
+  const handleProfileSubmit = async (values: ProfileFormValues) => {
     const payload = Object.fromEntries(
       Object.entries(values).filter(([_, v]) => v !== "")
     );
-
     try {
       await updateProfile(payload).unwrap();
       toast.success("Profile updated successfully");
-      form.reset();
-      setOpen(false);
-    } catch (err) {
+      profileForm.reset();
+      setOpenProfile(false);
+    } catch {
       toast.error("Failed to update profile");
+    }
+  };
+
+  const handlePasswordSubmit = async (values: PasswordFormValues) => {
+    try {
+      await changePasswordMutation(values).unwrap();
+      toast.success("Password changed successfully");
+      passwordForm.reset();
+      setOpenPassword(false);
+    } catch {
+      toast.error("Failed to change password");
     }
   };
 
@@ -93,8 +116,7 @@ export function ProfileCard() {
         </p>
       </div>
 
-      {/* Update Button + Modal */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={openProfile} onOpenChange={setOpenProfile}>
         <DialogTrigger asChild>
           <Button className="w-full">Update Profile</Button>
         </DialogTrigger>
@@ -102,20 +124,18 @@ export function ProfileCard() {
           <DialogHeader>
             <DialogTitle>Update Your Information</DialogTitle>
           </DialogHeader>
-
           {isUpdating ? (
             <p className="flex justify-center items-center h-32">
               <Loading />
             </p>
           ) : (
-            <Form {...form}>
+            <Form {...profileForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={profileForm.handleSubmit(handleProfileSubmit)}
                 className="space-y-3"
               >
-                {/* Name */}
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -127,10 +147,8 @@ export function ProfileCard() {
                     </FormItem>
                   )}
                 />
-
-                {/* Phone */}
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
@@ -142,28 +160,63 @@ export function ProfileCard() {
                     </FormItem>
                   )}
                 />
+                <Button type="submit" className="w-full" disabled={isUpdating}>
+                  {isUpdating ? "Updating..." : "Save Changes"}
+                </Button>
+              </form>
+            </Form>
+          )}
+        </DialogContent>
+      </Dialog>
 
-                {/* Password */}
+      <Dialog open={openPassword} onOpenChange={setOpenPassword}>
+        <DialogTrigger asChild>
+          <Button variant="secondary" className="w-full">
+            Change Password
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+          </DialogHeader>
+          {isChanging ? (
+            <p className="flex justify-center items-center h-32">
+              <Loading />
+            </p>
+          ) : (
+            <Form {...passwordForm}>
+              <form
+                onSubmit={passwordForm.handleSubmit(handlePasswordSubmit)}
+                className="space-y-3"
+              >
                 <FormField
-                  control={form.control}
-                  name="password"
+                  control={passwordForm.control}
+                  name="oldPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password </FormLabel>
+                      <FormLabel>Old Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="New Password"
-                          {...field}
-                        />
+                        <Password {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                <Button type="submit" disabled={isUpdating} className="w-full">
-                  {isUpdating ? "Updating..." : "Save Changes"}
+                <FormField
+                  control={passwordForm.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <FormControl>
+                        <Password {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full" disabled={isChanging}>
+                  {isChanging ? "Changing..." : "Change Password"}
                 </Button>
               </form>
             </Form>

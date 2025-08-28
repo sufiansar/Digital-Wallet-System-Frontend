@@ -1,0 +1,1 @@
+import{j as r}from"./index-CcoH4oKZ.js";import{P as e}from"./ProfileForm-BitYa8nh.js";import"./user.api-ieHgYxcs.js";import"./Loading-CydpJtcl.js";function a(){return r.jsxs("div",{className:"p-6",children:[r.jsx("h1",{className:"text-xl font-semibold mb-4",children:"Manage Your Profile"}),r.jsx(e,{})]})}export{a as default};

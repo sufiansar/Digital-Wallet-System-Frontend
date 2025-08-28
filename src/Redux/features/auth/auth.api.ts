@@ -16,7 +16,6 @@ export const authApi = baseApi.injectEndpoints({
         url: "/auth/login",
         method: "POST",
         data: credentials,
-       
       }),
       invalidatesTags: ["USER"],
     }),
@@ -24,6 +23,24 @@ export const authApi = baseApi.injectEndpoints({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
+      }),
+      invalidatesTags: ["USER"],
+    }),
+
+    changePassword: builder.mutation({
+      query: (passwordData) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        data: passwordData,
+      }),
+      invalidatesTags: ["USER"],
+    }),
+
+    contactPage: builder.mutation({
+      query: (contactData) => ({
+        url: "/otp/sendmail",
+        method: "POST",
+        data: contactData,
       }),
       invalidatesTags: ["USER"],
     }),
@@ -62,4 +79,6 @@ export const {
   useSendOtpMutation,
   useVerifyOtpMutation,
   useGetUserInfoQuery,
+  useChangePasswordMutation,
+  useContactPageMutation,
 } = authApi;
