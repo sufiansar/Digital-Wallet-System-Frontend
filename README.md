@@ -1,69 +1,80 @@
-# React + TypeScript + Vite
+# Digital Wallet System Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+This is the frontend for the Digital Wallet System, a modern web application that allows users to manage digital wallets, perform transactions, and access role-based dashboards (Admin, Agent, User). The platform supports authentication, user management, transaction history, and more, providing a seamless digital finance experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technology Stack
 
-## Expanding the ESLint configuration
+- **React** (with TypeScript)
+- **Redux Toolkit** (RTK Query)
+- **Vite** (build tool)
+- **Axios** (API requests)
+- **Tailwind CSS** (styling)
+- **Vercel** (deployment)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Setup Instructions
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. **Clone the repository:**
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/sufiansar/Digital-Wallet-System-Frontend.git
+cd Digital-Wallet-System-Frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Install dependencies:**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun install
+# or
+npm install
 ```
+
+3. **Configure environment variables:**
+
+- Copy `.env.example` to `.env` and update values as needed.
+
+4. **Run the development server:**
+
+```bash
+bun run dev
+# or
+npm run dev
+```
+
+5. **Build for production:**
+
+```bash
+bun run build
+# or
+npm run build
+```
+
+## Live URLs
+
+- [Production 1](https://digital-wallet-system-frontend-seven.vercel.app)
+- [Production 2](https://digital-wallet-system-fawn.vercel.app)
+
+## Backend Repository
+
+- [Digital Wallet System Backend](https://github.com/sufiansar/Digital-Wallet-System)
+
+## Frontend Repository
+
+- [Digital Wallet System Frontend](https://github.com/sufiansar/Digital-Wallet-System-Frontend)
+
+## Demo Accounts
+
+- **Admin:** admin@gmail.com / Sufian12!
+- **Agent:** agent@gmail.com / Sufian12@
+- **User:** sufian9184@gmail.com / Sufian12@
+
+## Notes
+
+- Make sure the backend server is running and CORS is configured properly for authentication to work.
+- For best experience, use the latest version of Chrome or Firefox.
+- If you encounter issues with cookies or authentication, check your browser settings and ensure you are using the correct environment variables.
+
+---
+
+Feel free to contribute or open issues on GitHub!
