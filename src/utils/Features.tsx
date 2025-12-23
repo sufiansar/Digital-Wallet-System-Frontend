@@ -1,47 +1,92 @@
-import { ArrowDown, ArrowUp, CreditCard, History, User } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CreditCard,
+  History,
+  User,
+  Sparkles,
+  Shield,
+  Zap,
+  Globe,
+} from "lucide-react";
 
 const FeaturesAll = [
   {
     title: "Wallet Balance",
-    description: "Check your wallet balance in real-time",
+    description: "Real-time balance tracking with instant updates",
     icon: <CreditCard className="w-6 h-6" />,
-    color: "bg-blue-100 text-blue-800",
+    color: "from-blue-500 to-cyan-400",
     url: "#",
+    stats: "Instant",
   },
   {
     title: "Deposit Money",
-    description: "Deposit money via agent cash-in simulation",
+    description: "Secure deposits via agents, banks, or cards",
     icon: <ArrowUp className="w-6 h-6" />,
-    color: "bg-green-100 text-green-800",
+    color: "from-emerald-500 to-green-400",
     url: "#",
+    stats: "0% Fees",
   },
   {
     title: "Withdraw Money",
-    description: "Withdraw cash from your wallet easily",
+    description: "Instant cash withdrawals worldwide",
     icon: <ArrowDown className="w-6 h-6" />,
-    color: "bg-red-100 text-red-800",
+    color: "from-rose-500 to-pink-400",
     url: "#",
+    stats: "24/7 Access",
   },
   {
     title: "Send Money",
-    description: "Send money to other users quickly",
+    description: "Send funds instantly to anyone",
     icon: <ArrowUp className="w-6 h-6 rotate-45" />,
-    color: "bg-yellow-100 text-yellow-800",
+    color: "from-amber-500 to-orange-400",
     url: "#",
+    stats: "< 1min",
   },
   {
     title: "Transaction History",
-    description: "View, filter, and paginate your transaction history",
+    description: "Advanced analytics with filters",
     icon: <History className="w-6 h-6" />,
-    color: "bg-purple-100 text-purple-800",
+    color: "from-violet-500 to-purple-400",
     url: "#",
+    stats: "AI Powered",
   },
   {
     title: "Profile Management",
-    description: "Update your name, phone, and password securely",
+    description: "Multi-factor authentication and privacy controls",
     icon: <User className="w-6 h-6" />,
-    color: "bg-pink-100 text-pink-800",
+    color: "from-fuchsia-500 to-pink-400",
     url: "#",
+    stats: "Bank-Level",
+  },
+];
+
+// Duplicate PremiumFeatures and extra default export removed
+
+export const PremiumFeatures = [
+  {
+    title: "Multi-Currency",
+    description: "Hold and exchange 50+ currencies",
+    icon: <Globe className="w-5 h-5" />,
+    color: "from-blue-500 to-indigo-500",
+  },
+  {
+    title: "Priority Support",
+    description: "24/7 dedicated support",
+    icon: <Sparkles className="w-5 h-5" />,
+    color: "from-amber-500 to-yellow-500",
+  },
+  {
+    title: "Advanced Security",
+    description: "Military-grade encryption",
+    icon: <Shield className="w-5 h-5" />,
+    color: "from-emerald-500 to-green-500",
+  },
+  {
+    title: "Instant Processing",
+    description: "Priority transaction processing",
+    icon: <Zap className="w-5 h-5" />,
+    color: "from-red-500 to-rose-500",
   },
 ];
 

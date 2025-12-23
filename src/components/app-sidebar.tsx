@@ -36,9 +36,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="flex items-center justify-center py-4 border-b">
         <Link to="/" className="flex items-center gap-2">
           <Logo />
-          <span className="font-bold text-lg hidden md:inline">
-            Wallet System
-          </span>
         </Link>
       </SidebarHeader>
 
@@ -83,20 +80,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <div className="mt-auto border-t py-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              {/* <Link
-                to="/settings"
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-neutral-800 transition-all`}
-                >
-                  <Settings className="h-4 w-4" />
-                Settings
-              </Link> */}
-            </SidebarMenuButton>
+            <SidebarMenuButton asChild></SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </div>
 
-      {/* Collapsible rail for mobile */}
       <SidebarRail />
     </Sidebar>
   );

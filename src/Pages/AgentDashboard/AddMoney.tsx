@@ -15,8 +15,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import { useAddMoneyMutation } from "@/Redux/features/Wallet/wallet.api";
+import { Wallet, Phone, DollarSign, ArrowDownLeft } from "lucide-react";
 
 const addMoneySchema = z.object({
   receiverPhone: z.string().min(1, "Receiver phone is required"),
@@ -50,71 +58,90 @@ export default function AddMoney() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center  p-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 sm:p-8 space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md bg-card border-border shadow-lg">
+        <CardHeader className="border-b border-border text-center">
+          <div className="flex justify-center mb-3">
+            <div className="p-3 rounded-full bg-green-500/10">
+              <Wallet className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-foreground">
             Add Money to Wallet
-          </h2>
-          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
-            Enter the receiver's phone and amount to add money safely.
-          </p>
-        </div>
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Enter the receiver's phone and amount to add money safely
+          </CardDescription>
+        </CardHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <FormField
-              control={form.control}
-              name="receiverPhone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Receiver Phone
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter user phone"
-                      {...field}
-                      className="focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <CardContent className="pt-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <FormField
+                control={form.control}
+                name="receiverPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      Receiver Phone
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter user phone"
+                        {...field}
+                        className="bg-background border-border focus:ring-2 focus:ring-primary/20"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700 dark:text-gray-300">
-                    Amount (BDT)
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter amount"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                      className="focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500 transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                      Amount (BDT)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter amount"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="bg-background border-border focus:ring-2 focus:ring-primary/20"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 text-foreground font-semibold bg-muted-foreground-900 shadow-md hover:foreground-600 hover:to-muted-700 transition-all rounded-lg"
-            >
-              {isLoading ? "Processing..." : "Add Money"}
-            </Button>
-          </form>
-        </Form>
-      </div>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <ArrowDownLeft className="h-4 w-4" />
+                    Add Money
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

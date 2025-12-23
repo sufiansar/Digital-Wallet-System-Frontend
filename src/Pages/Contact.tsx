@@ -100,7 +100,9 @@ const ContactPage = () => {
               <Mail className="w-6 h-6 text-primary" />
               <div>
                 <p className="font-semibold">Email</p>
-                <p className="text-muted-foreground">support@hablu.com</p>
+                <p className="text-muted-foreground">
+                  sufiancodecrush@gmail.com
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -110,7 +112,7 @@ const ContactPage = () => {
               <Phone className="w-6 h-6 text-primary" />
               <div>
                 <p className="font-semibold">Phone</p>
-                <p className="text-muted-foreground">+880 1234 567 890</p>
+                <p className="text-muted-foreground">01981600560</p>
               </div>
             </CardContent>
           </Card>
