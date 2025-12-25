@@ -19,7 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -27,163 +34,276 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import {
+  Wallet,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Send,
+  Upload,
+  Download,
+  Percent,
+  Activity,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
 import { useGetMyTransactionsQuery } from "@/Redux/features/Transaction/transaction.api";
 import type { TTransactionType } from "@/components/types/transActionTypes";
 import Loading from "@/utils/Loading";
 
 export default function TransactionHistory() {
   const [page, setPage] = useState(1);
-  const [type, setType] = useState<TTransactionType | undefined>(undefined);
+  const [type, setType] = useState<TTransactionType | undefined>();
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
 
   const { data, isLoading } = useGetMyTransactionsQuery({
     page,
-    limit: 5,
+    limit: 6,
     type,
     startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
     endDate: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
   });
 
   const transactions = data?.data || [];
-  const meta = data?.meta || { totalPage: 1, page: 1 };
+  const meta = data?.meta;
 
   const handlePrev = () => page > 1 && setPage(page - 1);
-  const handleNext = () => page < meta.totalPage && setPage(page + 1);
+  const handleNext = () => page < (meta?.totalPage || 1) && setPage(page + 1);
+
+  /* ---------------- Badges ---------------- */
+  const getTypeBadge = (type: string) => {
+    const config: Record<string, { icon: any; className: string }> = {
+      sendmoney: {
+        icon: Send,
+        className: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+      },
+      "cash-in": {
+        icon: ArrowDownLeft,
+        className: "bg-green-500/10 text-green-600 border-green-500/20",
+      },
+      "cash-out": {
+        icon: ArrowUpRight,
+        className: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+      },
+      withdrawal: {
+        icon: Upload,
+        className: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+      },
+      deposit: {
+        icon: Download,
+        className: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20",
+      },
+      commission: {
+        icon: Percent,
+        className: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+      },
+    };
+
+    const item = config[type] || {
+      icon: Activity,
+      className: "bg-muted",
+    };
+
+    const Icon = item.icon;
+
+    return (
+      <Badge className={`${item.className} flex items-center gap-1 capitalize`}>
+        <Icon className="h-3 w-3" />
+        {type.replace("-", " ")}
+      </Badge>
+    );
+  };
+
+  /* ---------------- Stats ---------------- */
+  const totalAmount = transactions.reduce(
+    (sum: number, t: any) => sum + (t.amount || 0),
+    0
+  );
 
   return (
-    <Card className="p-6 shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Transaction History</h2>
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500">
+          <Wallet className="h-6 w-6 text-white" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">Transaction History</h1>
+          <p className="text-muted-foreground">
+            View and track your wallet transactions
+          </p>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total Transactions</p>
+            <p className="text-2xl font-bold">{transactions.length}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total Amount</p>
+            <p className="text-2xl font-bold">
+              ৳ {totalAmount.toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Current Page</p>
+            <p className="text-2xl font-bold">{meta?.page || 1}</p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6 items-end">
-        {/* Transaction Type */}
-        <div>
-          <label className="text-sm block mb-1">Type</label>
-          <Select
-            onValueChange={(val) =>
-              setType(val === "all" ? undefined : (val as TTransactionType))
-            }
-            value={type ?? "all"}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All Types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="cash-in">Cash In</SelectItem>
-              <SelectItem value="cash-out">Cash Out</SelectItem>
-              <SelectItem value="sendmoney">Send Money</SelectItem>
-              <SelectItem value="withdrawal">Withdrawal</SelectItem>
-              <SelectItem value="deposit">Deposit</SelectItem>
-              <SelectItem value="commission">Commission</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Start Date */}
-        <div>
-          <label className="text-sm block mb-1">Start Date</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-[180px] justify-start text-left font-normal"
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+          <CardDescription>Filter your transactions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-4 items-end">
+            {/* Type */}
+            <div className="w-40">
+              <label className="text-sm mb-1 block">Type</label>
+              <Select
+                value={type ?? "all"}
+                onValueChange={(v) =>
+                  setType(v === "all" ? undefined : (v as TTransactionType))
+                }
               >
-                {startDate ? format(startDate, "dd MMM yyyy") : "Pick a date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="sendmoney">Send Money</SelectItem>
+                  <SelectItem value="cash-in">Cash In</SelectItem>
+                  <SelectItem value="cash-out">Cash Out</SelectItem>
+                  <SelectItem value="withdrawal">Withdrawal</SelectItem>
+                  <SelectItem value="deposit">Deposit</SelectItem>
+                  <SelectItem value="commission">Commission</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-        {/* End Date */}
-        <div>
-          <label className="text-sm block mb-1">End Date</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-[180px] justify-start text-left font-normal"
-              >
-                {endDate ? format(endDate, "dd MMM yyyy") : "Pick a date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
+            {/* Start Date */}
+            <div>
+              <label className="text-sm mb-1 block">Start Date</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[160px] justify-start">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "dd MMM yyyy") : "Pick date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
-      {/* Transactions Table */}
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>From</TableHead>
-              <TableHead>To</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
+            {/* End Date */}
+            <div>
+              <label className="text-sm mb-1 block">End Date</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[160px] justify-start">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDate ? format(endDate, "dd MMM yyyy") : "Pick date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Table */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center">
-                  <Loading />
-                </TableCell>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>From</TableHead>
+                <TableHead>To</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
-            ) : transactions.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-gray-500">
-                  No transactions found
-                </TableCell>
-              </TableRow>
-            ) : (
-              transactions.map((item: any) => (
-                <TableRow key={item._id}>
-                  <TableCell>
-                    {format(new Date(item.createdAt), "dd MMM yyyy")}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10">
+                    <Loading />
                   </TableCell>
-                  <TableCell className="capitalize">{item.type}</TableCell>
-                  <TableCell>৳ {item.amount}</TableCell>
-                  <TableCell>{item.sender || "N/A"}</TableCell>
-                  <TableCell>{item.receiver || "N/A"}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : transactions.length ? (
+                transactions.map((t: any) => (
+                  <TableRow key={t._id}>
+                    <TableCell>{getTypeBadge(t.type)}</TableCell>
+                    <TableCell className="font-semibold">
+                      ৳ {t.amount}
+                    </TableCell>
+                    <TableCell>{t.sender || "-"}</TableCell>
+                    <TableCell>{t.receiver || "-"}</TableCell>
+                    <TableCell>
+                      {format(new Date(t.createdAt), "dd MMM yyyy")}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10">
+                    No transactions found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <Button variant="outline" onClick={handlePrev} disabled={page === 1}>
-          Previous
-        </Button>
-        <span>
-          Page {meta.page} of {meta.totalPage}
-        </span>
-        <Button
-          variant="outline"
-          onClick={handleNext}
-          disabled={page === meta.totalPage}
-        >
-          Next
-        </Button>
-      </div>
-    </Card>
+      {meta && meta.totalPage > 1 && (
+        <div className="flex justify-between items-center">
+          <Button variant="outline" onClick={handlePrev} disabled={page === 1}>
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Page {meta.page} of {meta.totalPage}
+          </span>
+          <Button
+            variant="outline"
+            onClick={handleNext}
+            disabled={page === meta.totalPage}
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { ISidebarItem } from "@/components/types/index.type";
+
 // import AdminOverview from "@/Pages/AdminDashboard/AdminOverview";
 // import ProfilePage from "@/Pages/AdminDashboard/AdminProfile";
 // import AgentManagement from "@/Pages/AdminDashboard/AgentManagement";
@@ -17,7 +18,8 @@ const AllTransactions = lazy(
   () => import("@/Pages/AdminDashboard/AllTransaction")
 );
 const ManageUsers = lazy(() => import("@/Pages/AdminDashboard/ManageUsers"));
-
+const CreateBlog = lazy(() => import("@/Pages/Blog/CreateBlog"));
+const AdminBlogListPage = lazy(() => import("@/Pages/Blog/AdminViewFile"));
 export const adminSidebarItems: ISidebarItem[] = [
   {
     title: "Dashboard",
@@ -38,10 +40,21 @@ export const adminSidebarItems: ISidebarItem[] = [
         url: "/admin/manage-agents",
         component: AgentManagement,
       },
+
       {
         title: "All Transactions",
         url: "/admin/all-transactions",
         component: AllTransactions,
+      },
+      {
+        title: "Create Blog",
+        url: "/admin/create-blog",
+        component: CreateBlog,
+      },
+      {
+        title: "Manage Blogs",
+        url: "/admin/manage-blogs",
+        component: AdminBlogListPage,
       },
       {
         title: "Profile",

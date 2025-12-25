@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import heroTwoImage from "../../../assets/Mockup-2.png";
 import WhyChooseSection from "./WhyChooseUs";
 
@@ -64,11 +63,6 @@ const AboutUs = () => {
               (optit)
             </span>
           </div>
-
-          {/* CTA Section */}
-          <Button className="bg-gradient-to-r  text-foreground px-10 py-4 md:px-14 md:py-5 text-lg md:text-xl font-semibold rounded-full">
-            Get Started
-          </Button>
         </div>
 
         <div className="md:w-1/2 flex justify-center md:justify-end">

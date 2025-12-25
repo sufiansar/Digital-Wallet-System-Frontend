@@ -1,6 +1,6 @@
 const FAQSection = () => {
   return (
-    <section className="py-16 container mx-auto px-4">
+    <section className="py-16 max-w-7xl mx-auto px-4">
       <h2 className="text-3xl lg:text-4xl font-bold text-center text-foreground mb-10">
         Frequently Asked Questions
       </h2>

@@ -1,4 +1,5 @@
 import type { ISidebarItem } from "@/components/types/index.type";
+
 // import Deposit from "@/Pages/UserDashboard/Deposit";
 // import OverView from "@/Pages/UserDashboard/OverView";
 // import Profile from "@/Pages/UserDashboard/Profile";
@@ -44,6 +45,7 @@ export const userSidebarItems: ISidebarItem[] = [
         url: "/user/transactions",
         component: Transactions,
       },
+
       {
         title: "Profile",
         url: "/user/profile",

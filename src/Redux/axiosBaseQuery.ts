@@ -16,13 +16,18 @@ export const axiosBaseQuery =
   > =>
   async ({ url, method, data, params, headers }) => {
     try {
-      const result = await axiosInstance({
-        url: url,
+      const config: AxiosRequestConfig = {
+        url,
         method,
         data,
         params,
         headers,
-      });
+      };
+      // Let axios handle Content-Type for FormData automatically
+      if (data instanceof FormData && config.headers) {
+        delete config.headers["Content-Type"];
+      }
+      const result = await axiosInstance(config);
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
